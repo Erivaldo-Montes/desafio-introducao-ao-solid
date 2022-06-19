@@ -1,0 +1,281 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Gerence",
+    "description": "user management api",
+    "version": "1.0.0",
+    "contact": {
+      "email": "erivaldomontez$gmail.com"
+    }
+  },
+  "components": {
+    "schemas": {
+      "userSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "admin": {
+            "type": "boolean",
+            "enum": [
+              false,
+              true
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        }
+      },
+      "errorSchema": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/users": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "create",
+        "description": "create a new user",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "name": "Allan Kardec",
+                "email": "allenkardec@email.com"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userSchema"
+                },
+                "example": {
+                  "id": "5042ddf8-e9e5-4d02-ab75-be856d972ace",
+                  "admin": false,
+                  "name": "user2",
+                  "email": "user2@email.com",
+                  "created_at": "2022-06-19T00:18:22.520Z",
+                  "updated_at": "2022-06-19T00:18:22.520Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "email already in use",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorSchema"
+                },
+                "example": {
+                  "error": "email already in use"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "list users",
+        "description": "the admin can list all users",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "header",
+            "description": "ID of an admin",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "return a list of users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "schema": {
+                    "$ref": "#/components/schemas/userSchema"
+                  }
+                },
+                "example": [
+                  {
+                    "id": "45ad75fa-9afe-4313-9ecd-32408318be7c",
+                    "admin": false,
+                    "name": "user2",
+                    "email": "user2@email.com",
+                    "created_at": "2022-06-19T00:53:15.868Z",
+                    "updated_at": "2022-06-19T00:53:15.869Z"
+                  },
+                  {
+                    "id": "45ad75fa-9afe-4313-9ecd-32408318be7c",
+                    "admin": true,
+                    "name": "user2",
+                    "email": "user2@email.com",
+                    "created_at": "2022-06-19T00:53:15.868Z",
+                    "updated_at": "2022-06-19T00:53:15.869Z"
+                  }
+                ]
+              }
+            }
+          },
+          "400": {
+            "description": "when a non-ADM user requests the route",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorSchema"
+                },
+                "example": {
+                  "error": "access denied, not admin"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{user_id}/admin": {
+      "patch": {
+        "tags": [
+          "users"
+        ],
+        "summary": "turn admin",
+        "description": "turns a user into admin",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "ID a user you want to make admin",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "return the user as admin",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userSchema"
+                },
+                "example": {
+                  "id": "45ad75fa-9afe-4313-9ecd-32408318be7c",
+                  "admin": true,
+                  "name": "user2",
+                  "email": "user2@email.com",
+                  "created_at": "2022-06-19T00:53:15.868Z",
+                  "updated_at": "2022-06-19T00:53:15.869Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "when the user is not registered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorSchema"
+                },
+                "example": {
+                  "error": "user not exists"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{user_id}": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "show profile",
+        "description": "show the user profile",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "description": "ID of a user"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "profile user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userSchema"
+                },
+                "example": {
+                  "id": "45ad75fa-9afe-4313-9ecd-32408318be7c",
+                  "admin": false,
+                  "name": "user2",
+                  "email": "user2@email.com",
+                  "created_at": "2022-06-19T00:53:15.868Z",
+                  "updated_at": "2022-06-19T00:53:15.869Z"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "user not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorSchema"
+                },
+                "example": {
+                  "error": "user not found"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
