@@ -8,4 +8,5 @@ O [template](https://github.com/rocketseat-education/ignite-template-introducao-
 
 ## desafio extra
 como complemento a este desafio foi solicitado que as rotas fossem documentadas com o
-[swagger](https://github.com/swagger-api/swagger-ui)
+[swagger](https://github.com/swagger-api/swagger-ui).
+Para verficar as especificações das rotas acesse a rota /api-docs
